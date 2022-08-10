@@ -1,5 +1,5 @@
 import subprocess
-import psutil
+import time
 
 example_name="minimal-ml-inference"
 keyword="Hello World!"
@@ -56,7 +56,9 @@ except subprocess.CalledProcessError:
 #Run
 command="APP_NAME={}:{} MODEL_NAME={}:{} timeout 10 docker-compose -f {}/docker-compose.yml -H tcp://{}:2375 --env-file {}/config/env.{}.{} up".format(app_name, arch, model_name, arch, repo_name+example_name, camera_public_ip, repo_name+example_name ,arch, chip)
 try:
-    output=subprocess.check_output(command, shell=True)
+    p = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    time.sleep(10)
+    output = p.stdout.read()
 
 except subprocess.TimeoutExpired:
     print("Timeout reached")
